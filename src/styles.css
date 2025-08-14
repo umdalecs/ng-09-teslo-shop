@@ -3,3 +3,23 @@
 @plugin "daisyui" {
   themes: night --default;
 }
+
+@font-face {
+  font-family: Montserrat, sans-serif;
+  src: url("/assets/fonts/Montserrat-Medium.ttf") format("truetype");
+}
+
+@theme {
+  --font-montserrat: "Montserrat";
+
+  --animate-fadeIn: fadeIn 0.2s ease-in-out;
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}

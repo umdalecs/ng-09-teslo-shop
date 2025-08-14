@@ -1,0 +1,5 @@
+<h1 class="text-3xl font-bold font-montserrat mb-5">
+  Productos para <span class="text-accent">{{ gender() | i18nSelect : titles }}</span>
+</h1>
+
+<product-list [gender]="gender()" />
