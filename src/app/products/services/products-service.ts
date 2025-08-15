@@ -44,7 +44,6 @@ export class ProductsService {
       })
       .pipe(
         tap((value) => {
-          console.log(value);
           this.cacheProducts.set(key, value);
         })
       );
@@ -56,7 +55,6 @@ export class ProductsService {
 
     return this.http.get<Product>(`${BASE_URL}/products/${idSlug}`).pipe(
       tap((value) => {
-        console.log(value);
         this.cacheProduct.set(idSlug, value);
       })
     );
