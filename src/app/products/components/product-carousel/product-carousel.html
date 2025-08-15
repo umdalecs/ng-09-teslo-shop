@@ -3,11 +3,11 @@
   <div class="swiper-wrapper">
     <!-- Slides -->
     @for (image of images(); track image) {
-    <div class="swiper-slide">
+    <div class="swiper-slide w-full">
       <img
         [src]="image | productImage"
         alt="producto"
-        class="w-full object-cover"
+        class="image animate-fadeIn object-cover"
       />
     </div>
     }

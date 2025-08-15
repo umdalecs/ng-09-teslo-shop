@@ -1,20 +1,36 @@
 import { ProductsService } from '@/products/services/products-service';
-import { Component, inject, input } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  output,
+  signal,
+} from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ProductCard } from '../product-card/product-card';
+import { Pagination } from '@/shared/components/pagination/pagination';
+import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs';
+import { PaginationService } from '@/shared/components/pagination/pagination-service';
 
 @Component({
   selector: 'product-list',
-  imports: [ProductCard],
+  imports: [ProductCard, Pagination],
   templateUrl: './product-list.html',
   styles: ``,
 })
 export class ProductList {
   private productsService = inject(ProductsService);
+  protected paginationService = inject(PaginationService)
 
-  public gender = input('');
-  public limit = input(12);
-  public offset = input(0);
+  public gender = input<string>('');
+  public limit = input<number>(12);
+
+  protected offset = linkedSignal(
+    () => (this.paginationService.currentPage() - 1) * this.limit()
+  );
 
   protected productsResource = rxResource({
     params: () => ({
