@@ -16,10 +16,7 @@ import { ProductImagePipe } from '@/products/pipes/product-image-pipe';
   selector: 'product-carousel',
   imports: [ProductImagePipe],
   templateUrl: './product-carousel.html',
-  styles: `.swiper {
-    width: 100%;
-    height: 500px;
-  }`,
+  styles: ``,
 })
 export class ProductCarousel implements AfterViewInit {
   public readonly images = input.required<string[]>();

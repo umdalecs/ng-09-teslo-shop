@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Product, ProductsResponse } from '../interfaces/product-response';
-import { Observable, of, tap } from 'rxjs';
+import { delay, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 const BASE_URL = environment.backendUrl;
@@ -54,9 +54,17 @@ export class ProductsService {
       return of(this.cacheProduct.get(idSlug)!);
 
     return this.http.get<Product>(`${BASE_URL}/products/${idSlug}`).pipe(
+      delay(2000),
       tap((value) => {
         this.cacheProduct.set(idSlug, value);
       })
     );
+  }
+
+  updateProduct(
+    id: string,
+    productLike: Partial<Product>
+  ): Observable<Product> {
+    return this.http.patch<Product>(`${BASE_URL}/products/${id}`, productLike);
   }
 }
