@@ -15,6 +15,10 @@
     <option value="30">30</option>
     <option value="40">40</option>
   </select>
+
+  <div class="flex flex-1"></div>
+
+  <button class="btn btn-primary" routerLink="/dashboard/product/new">Nuevo producto</button>
 </div>
 
 <div class="overflow-x-auto">
@@ -53,7 +57,7 @@
             </div>
             <div>
               <a
-                [routerLink]="['/admin/product', product.id]"
+                [routerLink]="['/dashboard/product', product.id]"
                 class="font-bold hover:text-accent transition-colors duration-200 "
                 >{{ product.title }}</a
               >

@@ -8,7 +8,7 @@ const BASE_URL = environment.backendUrl;
 })
 export class ProductImagePipe implements PipeTransform {
 
-  transform(value: string | string[]): string {
+  transform(value: string | string[] | null): string {
     if (typeof value === 'string')
       return `${BASE_URL}/files/product/${value}`;
 

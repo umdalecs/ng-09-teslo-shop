@@ -23,7 +23,7 @@ export class ProductAdminPage {
   protected productResource = rxResource({
     params: () => ({ id: this.productId() ?? '' }),
     stream: ({ params }) => {
-      return this.productsService.getProductByIdSlug(params.id);
+      return this.productsService.getProductById(params.id);
     },
   });
 

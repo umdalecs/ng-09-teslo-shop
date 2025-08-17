@@ -80,21 +80,25 @@
     </ul>
   </div>
   <div class="navbar-end gap-4">
+    @if(authService.isAdmin()) {
+    <a routerLink="/dashboard" class="btn btn-ghost btn-secondary">Admin panel</a>
+    }
+    <!--  -->
     @if(authService.authStatus() === 'authenticated') {
-      <button class="btn btn-ghost">
-        {{authService.user()?.fullName}}
-      </button>
-      <button class="btn btn-sm btn-error" (click)="authService.logout()">
-        Cerrar sesión
-      </button>
+    <button class="btn btn-ghost">
+      {{ authService.user()?.fullName }}
+    </button>
+    <button class="btn btn-sm btn-error" (click)="authService.logout()">
+      Cerrar sesión
+    </button>
     }
     <!--  -->
     @else if (authService.authStatus() === 'not-authenticated') {
-      <a routerLink="/auth/login">Iniciar sesión</a>
+    <a routerLink="/auth/login">Iniciar sesión</a>
     }
     <!--  -->
     @else {
-      <a class="btn btn-ghost">...</a>
+    <a class="btn btn-ghost">...</a>
     }
   </div>
 </div>

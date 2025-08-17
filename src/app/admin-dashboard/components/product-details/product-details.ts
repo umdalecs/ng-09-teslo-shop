@@ -1,10 +1,11 @@
 import { Product } from '@/products/interfaces/product-response';
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { ProductCarousel } from '@/products/components/product-carousel/product-carousel';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '@/utils/form-utils';
 import { FormErrorLabel } from '@/shared/components/form-error-label/form-error-label';
 import { ProductsService } from '@/products/services/products-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'product-details',
@@ -15,9 +16,12 @@ import { ProductsService } from '@/products/services/products-service';
 export class ProductDetails implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly productsService = inject(ProductsService);
+  private router = inject(Router);
 
   public readonly product = input.required<Product>();
   protected readonly sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  protected wasSaved = signal(false);
 
   ngOnInit(): void {
     this.setFormValue(this.product());
@@ -65,11 +69,24 @@ export class ProductDetails implements OnInit {
         .map((tag) => tag.trim()),
     };
 
-    this.productsService
-      .updateProduct(this.product().id, productLike)
-      .subscribe((producto) => {
-        console.log('Producto actualizado!!');
+    if (this.product().id === 'new') {
+      this.productsService.createProduct(productLike).subscribe((product) => {
+        console.log(product);
       });
+      this.router.navigateByUrl('/dashboard/products');
+    } else {
+      this.productsService
+        .updateProduct(this.product().id, productLike)
+        .subscribe((producto) => {
+          console.log('Producto actualizado!!');
+        });
+
+      this.wasSaved.set(true);
+
+      setTimeout(() => {
+        this.wasSaved.set(false);
+      }, 2000);
+    }
   }
 
   onSizeClick(size: string) {
