@@ -1,4 +1,4 @@
-<h1 class="text-2xl font-bold">{{ product().title }}</h1>
+<h1 class="text-2xl font-bold">{{ currentProduct().title }}</h1>
 <div class="divider"></div>
 
 <form
@@ -154,9 +154,21 @@
       </button>
     </div>
 
-    <product-carousel [images]="product().images" />
+    <product-carousel [images]="imagesToCarousel()" />
 
-    <input type="file" class="file-input file-input-bordered w-full mt-4" />
+    <input
+      type="file"
+      multiple
+      accept="image/*"
+      (change)="onFilesChange($event)"
+      class="file-input file-input-bordered w-full mt-4"
+    />
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      @for (image of tempImages(); track image) {
+      <img [src]="image" alt="image to upload" />
+      }
+    </div>
   </div>
 </form>
 

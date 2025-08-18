@@ -9,8 +9,11 @@ const BASE_URL = environment.backendUrl;
 export class ProductImagePipe implements PipeTransform {
 
   transform(value: string | string[] | null): string {
-    if (typeof value === 'string')
+    if (typeof value === 'string') {
+      if(value.startsWith('blob')) return value;
+
       return `${BASE_URL}/files/product/${value}`;
+    }
 
     if (value instanceof Array && value.length >= 1)
       return `${BASE_URL}/files/product/${value[0]}`;

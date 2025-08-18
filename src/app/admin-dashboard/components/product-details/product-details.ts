@@ -1,11 +1,20 @@
 import { Product } from '@/products/interfaces/product-response';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ProductCarousel } from '@/products/components/product-carousel/product-carousel';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '@/utils/form-utils';
 import { FormErrorLabel } from '@/shared/components/form-error-label/form-error-label';
 import { ProductsService } from '@/products/services/products-service';
 import { Router } from '@angular/router';
+import { first, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'product-details',
@@ -19,9 +28,16 @@ export class ProductDetails implements OnInit {
   private router = inject(Router);
 
   public readonly product = input.required<Product>();
+  public currentProduct = linkedSignal(() => this.product());
   protected readonly sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   protected wasSaved = signal(false);
+  protected imageFileList: FileList | undefined = undefined;
+  protected tempImages = signal<string[]>([]);
+
+  protected imagesToCarousel = computed(() => {
+    return [...this.product().images, ...this.tempImages()];
+  });
 
   ngOnInit(): void {
     this.setFormValue(this.product());
@@ -53,7 +69,7 @@ export class ProductDetails implements OnInit {
     images: [[''], [], []],
   });
 
-  onSubmit() {
+  async onSubmit() {
     if (this.productForm.invalid) {
       this.productForm.markAllAsTouched();
       return;
@@ -70,16 +86,19 @@ export class ProductDetails implements OnInit {
     };
 
     if (this.product().id === 'new') {
-      this.productsService.createProduct(productLike).subscribe((product) => {
-        console.log(product);
-      });
-      this.router.navigateByUrl('/dashboard/products');
+      const product = await firstValueFrom(
+        this.productsService.createProduct(productLike, this.imageFileList)
+      );
+
+      this.router.navigate(['/dashboard/product', product.id]);
     } else {
-      this.productsService
-        .updateProduct(this.product().id, productLike)
-        .subscribe((producto) => {
-          console.log('Producto actualizado!!');
-        });
+      await firstValueFrom(
+        this.productsService.updateProduct(
+          this.product().id,
+          productLike,
+          this.imageFileList
+        )
+      );
 
       this.wasSaved.set(true);
 
@@ -99,5 +118,17 @@ export class ProductDetails implements OnInit {
     }
 
     this.productForm.patchValue({ sizes: currentSizes });
+  }
+
+  onFilesChange(event: Event) {
+    const fileList = (event.target as HTMLInputElement).files;
+
+    this.imageFileList = fileList ?? undefined;
+
+    const imageUrls = Array.from(fileList ?? []).map((file) =>
+      URL.createObjectURL(file)
+    );
+
+    this.tempImages.set(imageUrls);
   }
 }
